@@ -113,11 +113,19 @@
             </div>
             <video id="video2" controls autoplay muted playsinline></video>
         </div>
+        <div class="camera-card">
+            <div class="camera-title">
+                <span>Garasi Belakang Rumah</span>
+                <span class="live-badge">LIVE</span>
+            </div>
+            <video id="videoBardi" controls autoplay muted playsinline></video>
+        </div>
     </div>
 
     <script>
         var url1 = 'https://cctv.manalagi.cloud/cam01/index.m3u8';
         var url2 = 'https://cctv.manalagi.cloud/cam03/index.m3u8';
+        var urlBardi = 'https://cctv.manalagi.cloud/cam_bardi/index.m3u8';
 
         function loadVideo(id, url) {
             var video = document.getElementById(id);
@@ -143,6 +151,7 @@
 
         loadVideo('video1', url1);
         loadVideo('video2', url2);
+        loadVideo('videoBardi', urlBardi);
     </script>
 
 </body>
