@@ -34,7 +34,6 @@ const CameraCard = ({ camera }: CameraCardProps) => {
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(() => {
-            // Autoplay might be blocked
             setStatus(StreamStatus.IDLE);
         });
         setStatus(StreamStatus.PLAYING);
@@ -44,7 +43,6 @@ const CameraCard = ({ camera }: CameraCardProps) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              // Try to recover network error
               console.warn(`Network error on ${camera.label}, trying to recover...`);
               hls.startLoad();
               break;
@@ -53,7 +51,6 @@ const CameraCard = ({ camera }: CameraCardProps) => {
               hls.recoverMediaError();
               break;
             default:
-              // Cannot recover
               hls.destroy();
               setStatus(StreamStatus.ERROR);
               break;
@@ -61,7 +58,6 @@ const CameraCard = ({ camera }: CameraCardProps) => {
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS support (Safari)
       video.src = camera.url;
       video.addEventListener('loadedmetadata', () => {
         video.play();
@@ -136,7 +132,7 @@ const CameraCard = ({ camera }: CameraCardProps) => {
           autoPlay
           muted
           playsInline
-          controls={false} // Custom controls or just hidden for aesthetic
+          controls={false}
         />
 
         {/* Loading Overlay */}

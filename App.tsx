@@ -6,7 +6,6 @@ import { ShieldCheck, Clock } from 'lucide-react';
 const App = () => {
   const [currentTime, setCurrentTime] = useState<string>('');
 
-  // Update clock every second
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
