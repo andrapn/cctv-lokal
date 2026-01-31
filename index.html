@@ -64,22 +64,15 @@
             animation: pulse 2s infinite;
         }
 
-        /* --- UPDATE PENTING DI SINI --- */
         video {
             width: 100%;
             border-radius: 8px;
             background: #000;
             display: block;
-            
-            /* Paksa Rasio 16:9 (Layar Lebar) */
             aspect-ratio: 16 / 9;
-            
-            /* Opsional: 'fill' memaksa gambar memenuhi kotak (RT 03 akan sedikit melebar/gepeng tapi rapi) */
-            /* Kalau mau proporsional tapi ada sisi hitam, ganti 'fill' jadi 'contain' */
             object-fit: fill; 
         }
 
-        /* Menyembunyikan Timeline bar */
         video::-webkit-media-controls-timeline,
         video::-webkit-media-controls-current-time-display,
         video::-webkit-media-controls-time-remaining-display {
