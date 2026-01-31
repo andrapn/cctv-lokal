@@ -1,0 +1,7 @@
+# Abaikan file konfigurasi rahasia
+mediamtx.yml
+docker-compose.yml
+
+# Abaikan folder sampah sistem (opsional)
+.DS_Store
+Thumbs.db
