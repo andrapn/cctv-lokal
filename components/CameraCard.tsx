@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 import { CameraConfig, StreamStatus } from '../types';
 import { AlertCircle, RefreshCw, Video, Signal, Maximize2 } from 'lucide-react';
