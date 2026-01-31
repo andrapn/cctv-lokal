@@ -1,39 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>CCTV Warga RT 03/04</title>
-    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV Warga - Manalagi Cloud</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
     <style>
-        body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; }
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
-        .video-box { width: 100%; max-width: 480px; background: #000; padding: 10px; border-radius: 10px; }
-        h3 { margin-top: 0; color: #00ff88; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #4CAF50;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cctv-grid {
+            display: grid;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            grid-template-columns: 1fr; 
+        }
+
+        @media (min-width: 768px) {
+            .cctv-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .camera-card {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .camera-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .live-badge {
+            background-color: #ff0000;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- UPDATE PENTING DI SINI --- */
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+            display: block;
+            
+            /* Paksa Rasio 16:9 (Layar Lebar) */
+            aspect-ratio: 16 / 9;
+            
+            /* Opsional: 'fill' memaksa gambar memenuhi kotak (RT 03 akan sedikit melebar/gepeng tapi rapi) */
+            /* Kalau mau proporsional tapi ada sisi hitam, ganti 'fill' jadi 'contain' */
+            object-fit: fill; 
+        }
+
+        /* Menyembunyikan Timeline bar */
+        video::-webkit-media-controls-timeline,
+        video::-webkit-media-controls-current-time-display,
+        video::-webkit-media-controls-time-remaining-display {
+            display: none !important;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
+
     <h1>Pantauan CCTV Lingkungan</h1>
-    <div class="container">
-        
-        <div class="video-box">
-            <h3>🎥 Jalan RT 03</h3>
-            <video id="vid1" class="video-js vjs-default-skin vjs-fluid" controls preload="auto">
-                <source src="https://cctv.manalagi.cloud/cam01/index.m3u8" type="application/x-mpegURL">
-            </video>
+
+    <div class="cctv-grid">
+        <div class="camera-card">
+            <div class="camera-title">
+                <span>📹 Jalan RT 03</span>
+                <span class="live-badge">LIVE</span>
+            </div>
+            <video id="video1" controls autoplay muted playsinline></video>
         </div>
 
-        <div class="video-box">
-            <h3>🎥 Jalan RT 04</h3>
-            <video id="vid3" class="video-js vjs-default-skin vjs-fluid" controls preload="auto">
-                <source src="https://cctv.manalagi.cloud/cam03/index.m3u8" type="application/x-mpegURL">
-            </video>
+        <div class="camera-card">
+            <div class="camera-title">
+                <span>📹 Jalan RT 04</span>
+                <span class="live-badge">LIVE</span>
+            </div>
+            <video id="video2" controls autoplay muted playsinline></video>
         </div>
-
     </div>
 
-    <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
     <script>
-        var player1 = videojs('vid1');
-        var player3 = videojs('vid3');
+        var url1 = 'https://cctv.manalagi.cloud/cam01/index.m3u8';
+        var url2 = 'https://cctv.manalagi.cloud/cam03/index.m3u8';
+
+        function loadVideo(id, url) {
+            var video = document.getElementById(id);
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        hls.startLoad();
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+        }
+
+        loadVideo('video1', url1);
+        loadVideo('video2', url2);
     </script>
+
 </body>
 </html>
