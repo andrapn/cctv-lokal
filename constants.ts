@@ -1,0 +1,25 @@
+import { CameraConfig } from './types';
+
+export const APP_TITLE = "CCTV Warga";
+export const APP_SUBTITLE = "Lingkungan RW 02 Manalagi";
+
+export const CAMERAS: CameraConfig[] = [
+  {
+    id: 'cam-01',
+    label: 'Jalan RT 03',
+    location: 'Pos Utama',
+    url: 'https://cctv.manalagi.cloud/cam01/index.m3u8'
+  },
+  {
+    id: 'cam-02',
+    label: 'Jalan RT 04',
+    location: 'Persimpangan',
+    url: 'https://cctv.manalagi.cloud/cam03/index.m3u8'
+  },
+  {
+    id: 'cam-03',
+    label: 'Garasi Belakang',
+    location: 'Area Parkir',
+    url: 'https://cctv.manalagi.cloud/cam_bardi/index.m3u8'
+  }
+];

@@ -1,151 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CCTV Warga - Manalagi Cloud</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: #4CAF50;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .cctv-grid {
-            display: grid;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            grid-template-columns: 1fr; 
-        }
-
-        @media (min-width: 768px) {
-            .cctv-grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        .camera-card {
-            background: #1e1e1e;
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            position: relative;
-        }
-
-        .camera-title {
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #ddd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .live-badge {
-            background-color: #ff0000;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 8px;
-            background: #000;
-            display: block;
-            aspect-ratio: 16 / 9;
-            object-fit: fill; 
-        }
-
-        video::-webkit-media-controls-timeline,
-        video::-webkit-media-controls-current-time-display,
-        video::-webkit-media-controls-time-remaining-display {
-            display: none !important;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Pantauan CCTV Lingkungan RW 02 Manalagi</h1>
-
-    <div class="cctv-grid">
-        <div class="camera-card">
-            <div class="camera-title">
-                <span>Jalan RT 03</span>
-                <span class="live-badge">LIVE</span>
-            </div>
-            <video id="video1" controls autoplay muted playsinline></video>
-        </div>
-
-        <div class="camera-card">
-            <div class="camera-title">
-                <span>Jalan RT 04</span>
-                <span class="live-badge">LIVE</span>
-            </div>
-            <video id="video2" controls autoplay muted playsinline></video>
-        </div>
-        <div class="camera-card">
-            <div class="camera-title">
-                <span>Garasi Belakang Rumah</span>
-                <span class="live-badge">LIVE</span>
-            </div>
-            <video id="videoBardi" controls autoplay muted playsinline></video>
-        </div>
-    </div>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        var url1 = 'https://cctv.manalagi.cloud/cam01/index.m3u8';
-        var url2 = 'https://cctv.manalagi.cloud/cam03/index.m3u8';
-        var urlBardi = 'https://cctv.manalagi.cloud/cam_bardi/index.m3u8';
-
-        function loadVideo(id, url) {
-            var video = document.getElementById(id);
-            if (Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        hls.startLoad();
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                });
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             }
+          }
         }
-
-        loadVideo('video1', url1);
-        loadVideo('video2', url2);
-        loadVideo('videoBardi', urlBardi);
+      }
     </script>
+    <style>
+      body {
+        background-color: #0f172a; /* Slate 950 */
+      }
 
-</body>
+      /* Menyembunyikan timeline/progress bar dan indikator waktu */
+      video::-webkit-media-controls-timeline,
+      video::-webkit-media-controls-current-time-display,
+      video::-webkit-media-controls-time-remaining-display,
+      video::-webkit-media-controls-seek-back-button,
+      video::-webkit-media-controls-seek-forward-button {
+        display: none !important;
+      }
+      
+      /* Khusus Firefox */
+      video::-moz-range-track,
+      video::-moz-range-progress {
+        display: none !important;
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "hls.js": "https://esm.sh/hls.js@^1.6.15",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
