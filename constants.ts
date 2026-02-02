@@ -7,7 +7,7 @@ export const CAMERAS: CameraConfig[] = [
   {
     id: 'cam-01',
     label: 'Jalan RT 03',
-    location: 'Pos Utama',
+    location: 'Jalan Utama',
     url: 'https://cctv.manalagi.cloud/cam01/index.m3u8'
   },
   {
@@ -15,11 +15,11 @@ export const CAMERAS: CameraConfig[] = [
     label: 'Jalan RT 04',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cam03/index.m3u8'
-  },
-  {
-    id: 'cam-03',
-    label: 'Garasi Belakang',
-    location: 'Area Parkir',
-    url: 'https://cctv.manalagi.cloud/cam_bardi/index.m3u8'
   }
+  // {
+  //   id: 'cam-03',
+  //   label: 'Garasi Belakang',
+  //   location: 'Area Parkir',
+  //   url: 'https://cctv.manalagi.cloud/cam_bardi/index.m3u8'
+  // }
 ];
