@@ -20,6 +20,10 @@ const App = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Filter cameras by category
+  const cctvWarga = CAMERAS.filter(camera => camera.category === 'warga');
+  const cctvKota = CAMERAS.filter(camera => camera.category === 'kota');
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-emerald-500/30">
       
@@ -61,9 +65,16 @@ const App = () => {
             </div>
         </div>
 
-        {/* Camera Grid */}
+        <h2 className="text-2xl font-semibold text-white mb-1">CCTV Warga</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {CAMERAS.map((camera) => (
+          {cctvWarga.map((camera) => (
+            <CameraCard key={camera.id} camera={camera} />
+          ))}
+        </div>
+
+        <h2 className="text-2xl font-semibold text-white mt-8 mb-1">CCTV Kota</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cctvKota.map((camera) => (
             <CameraCard key={camera.id} camera={camera} />
           ))}
         </div>
