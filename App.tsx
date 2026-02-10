@@ -20,7 +20,6 @@ const App = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter cameras by category
   const cctvWarga = CAMERAS.filter(camera => camera.category === 'warga');
   const cctvKota = CAMERAS.filter(camera => camera.category === 'kota');
 
@@ -50,7 +49,7 @@ const App = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Dashboard Stats / Info (Optional but adds polish) */}
+        {/* Dashboard Stats */}
         <div className="mb-8 flex items-center justify-between">
             <div>
                 <h2 className="text-2xl font-semibold text-white mb-1">Live Monitoring</h2>
@@ -65,14 +64,14 @@ const App = () => {
             </div>
         </div>
 
-        <h2 className="text-2xl font-semibold text-white mb-1">CCTV Warga</h2>
+        <h2 className="text-2xl font-semibold text-white mb-1">CCTV Warga Manalagi</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cctvWarga.map((camera) => (
             <CameraCard key={camera.id} camera={camera} />
           ))}
         </div>
 
-        <h2 className="text-2xl font-semibold text-white mt-8 mb-1">CCTV Kota</h2>
+        <h2 className="text-2xl font-semibold text-white mt-8 mb-1">CCTV Kota Semarang</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cctvKota.map((camera) => (
             <CameraCard key={camera.id} camera={camera} />

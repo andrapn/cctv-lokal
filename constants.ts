@@ -9,20 +9,20 @@ export const CAMERAS: CameraConfig[] = [
     label: 'Jalan RT 03',
     location: 'Jalan Utama',
     url: 'https://cctv.manalagi.cloud/cam01/index.m3u8',
-    category: 'warga' // Tambahkan ini
+    category: 'warga'
   },
   {
     id: 'cam-02',
     label: 'Jalan RT 04',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cam03/index.m3u8',
-    category: 'warga' // Tambahkan ini
+    category: 'warga'
   },
   {
     id: 'cam-03',
     label: 'Jalan Jerakah',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cctv_jrakah/index.m3u8',
-    category: 'kota' // Tambahkan ini
+    category: 'kota'
   }
 ];

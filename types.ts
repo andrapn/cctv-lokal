@@ -3,7 +3,7 @@ export interface CameraConfig {
   label: string;
   url: string;
   location?: string;
-  category: 'warga' | 'kota'; // Tambahkan ini, dengan tipe yang sesuai
+  category: 'warga' | 'kota'; 
 }
 
 export enum StreamStatus {
