@@ -41,30 +41,16 @@ export const CAMERAS: CameraConfig[] = [
   },
   {
     id: 'cam-06',
-    label: 'Balaikota',
-    location: 'Persimpangan',
-    url: 'https://cctv.manalagi.cloud/cctv_balaikota/index.m3u8',
-    category: 'kota'
-  },
-  {
-    id: 'cam-07',
     label: 'Jalan Pahlawan',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cctv_pahlawan/index.m3u8',
     category: 'kota'
   },
   {
-    id: 'cam-08',
+    id: 'cam-07',
     label: 'Kota Lama',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cctv_kotalama1/index.m3u8',
-    category: 'kota'
-  },
-  {
-    id: 'cam-09',
-    label: 'Kota Lama 2',
-    location: 'Persimpangan',
-    url: 'https://cctv.manalagi.cloud/cctv_kotalama2/index.m3u8',
     category: 'kota'
   }
 ];
