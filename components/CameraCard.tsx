@@ -5,7 +5,7 @@ import { AlertCircle, RefreshCw, Video, Signal, Maximize2, Play, Pause } from 'l
 
 interface CameraCardProps {
   camera: CameraConfig;
-  autoPlay?: boolean; // Tambahan props baru
+  autoPlay?: boolean;
 }
 
 const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
@@ -14,7 +14,6 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const hlsRef = useRef<Hls | null>(null);
 
-  // Fungsi untuk menghancurkan HLS instance (bersih-bersih)
   const destroyPlayer = useCallback(() => {
     if (hlsRef.current) {
       hlsRef.current.destroy();
@@ -23,7 +22,6 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
   }, []);
 
   const initPlayer = useCallback(() => {
-    // Jika tidak disuruh main, jangan init player
     if (!isPlaying) return;
 
     setStatus(StreamStatus.LOADING);
@@ -31,7 +29,7 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
     if (!video) return;
 
     if (Hls.isSupported()) {
-      destroyPlayer(); // Pastikan bersih dulu
+      destroyPlayer();
 
       const hls = new Hls({
         enableWorker: true,
@@ -83,7 +81,6 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
     }
   }, [camera.url, camera.label, isPlaying, destroyPlayer]);
 
-  // Effect untuk inisialisasi atau cleanup berdasarkan state isPlaying
   useEffect(() => {
     if (isPlaying) {
       initPlayer();
