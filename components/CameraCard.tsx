@@ -1,26 +1,37 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 import { CameraConfig, StreamStatus } from '../types';
-import { AlertCircle, RefreshCw, Video, Signal, Maximize2 } from 'lucide-react';
+import { AlertCircle, RefreshCw, Video, Signal, Maximize2, Play, Pause } from 'lucide-react';
 
 interface CameraCardProps {
   camera: CameraConfig;
+  autoPlay?: boolean; // Tambahan props baru
 }
 
-const CameraCard = ({ camera }: CameraCardProps) => {
+const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [status, setStatus] = useState<StreamStatus>(StreamStatus.LOADING);
+  const [status, setStatus] = useState<StreamStatus>(autoPlay ? StreamStatus.LOADING : StreamStatus.IDLE);
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
   const hlsRef = useRef<Hls | null>(null);
 
+  // Fungsi untuk menghancurkan HLS instance (bersih-bersih)
+  const destroyPlayer = useCallback(() => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }, []);
+
   const initPlayer = useCallback(() => {
+    // Jika tidak disuruh main, jangan init player
+    if (!isPlaying) return;
+
     setStatus(StreamStatus.LOADING);
     const video = videoRef.current;
     if (!video) return;
 
     if (Hls.isSupported()) {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-      }
+      destroyPlayer(); // Pastikan bersih dulu
 
       const hls = new Hls({
         enableWorker: true,
@@ -34,7 +45,8 @@ const CameraCard = ({ camera }: CameraCardProps) => {
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch(() => {
-            setStatus(StreamStatus.IDLE);
+          setStatus(StreamStatus.IDLE);
+          setIsPlaying(false);
         });
         setStatus(StreamStatus.PLAYING);
       });
@@ -51,7 +63,7 @@ const CameraCard = ({ camera }: CameraCardProps) => {
               hls.recoverMediaError();
               break;
             default:
-              hls.destroy();
+              destroyPlayer();
               setStatus(StreamStatus.ERROR);
               break;
           }
@@ -69,18 +81,30 @@ const CameraCard = ({ camera }: CameraCardProps) => {
     } else {
       setStatus(StreamStatus.ERROR);
     }
-  }, [camera.url, camera.label]);
+  }, [camera.url, camera.label, isPlaying, destroyPlayer]);
 
+  // Effect untuk inisialisasi atau cleanup berdasarkan state isPlaying
   useEffect(() => {
-    initPlayer();
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
+    if (isPlaying) {
+      initPlayer();
+    } else {
+      destroyPlayer();
+      setStatus(StreamStatus.IDLE);
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.removeAttribute('src'); // Unload video source
+        videoRef.current.load();
       }
-    };
-  }, [initPlayer]);
+    }
+    return () => destroyPlayer();
+  }, [isPlaying, initPlayer, destroyPlayer]);
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   const handleRetry = () => {
+    setIsPlaying(true);
     initPlayer();
   };
 
@@ -106,17 +130,21 @@ const CameraCard = ({ camera }: CameraCardProps) => {
           )}
         </div>
         
-        {/* Status Badge */}
-        <div className="flex items-center gap-2">
-            {status === StreamStatus.PLAYING && (
+        {/* Status Badge & Controls */}
+        <div className="flex items-center gap-2 pointer-events-auto">
+            {status === StreamStatus.PLAYING ? (
                 <div className="flex items-center gap-1.5 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse-fast">
                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                     LIVE
                 </div>
+            ) : (
+                <div className="flex items-center gap-1.5 bg-slate-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                    PAUSED
+                </div>
             )}
              <button 
                 onClick={handleFullScreen}
-                className="pointer-events-auto p-1.5 bg-black/40 hover:bg-black/60 text-white rounded-md backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100"
+                className="p-1.5 bg-black/40 hover:bg-black/60 text-white rounded-md backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100"
                 title="Fullscreen"
             >
                 <Maximize2 size={14} />
@@ -125,19 +153,36 @@ const CameraCard = ({ camera }: CameraCardProps) => {
       </div>
 
       {/* Video Container */}
-      <div className="relative aspect-video bg-black flex items-center justify-center">
+      <div className="relative aspect-video bg-black flex items-center justify-center group/video cursor-pointer" onClick={togglePlay}>
         <video
           ref={videoRef}
-          className={`w-full h-full object-fill transition-opacity duration-500 ${status === StreamStatus.PLAYING ? 'opacity-100' : 'opacity-0'}`}
-          autoPlay
+          className={`w-full h-full object-fill transition-opacity duration-500 ${status === StreamStatus.PLAYING ? 'opacity-100' : 'opacity-40'}`}
           muted
           playsInline
           controls={false}
         />
 
+        {/* Play Button Overlay (Muncul saat Pause atau Idle) */}
+        {!isPlaying && status !== StreamStatus.ERROR && (
+          <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/20 group-hover/video:bg-black/10 transition-colors">
+            <div className="w-14 h-14 bg-emerald-500/90 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20 hover:scale-110 transition-transform">
+              <Play fill="white" className="text-white ml-1" size={28} />
+            </div>
+          </div>
+        )}
+
+        {/* Pause Overlay (Muncul saat hover video yang sedang main) */}
+        {isPlaying && status === StreamStatus.PLAYING && (
+           <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover/video:opacity-100 transition-opacity bg-black/10">
+             <div className="w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center">
+               <Pause fill="white" className="text-white" size={24} />
+             </div>
+           </div>
+        )}
+
         {/* Loading Overlay */}
         {status === StreamStatus.LOADING && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-0">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10 pointer-events-none">
             <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-2"></div>
             <span className="text-xs text-slate-400 animate-pulse">Menghubungkan...</span>
           </div>
@@ -149,7 +194,7 @@ const CameraCard = ({ camera }: CameraCardProps) => {
             <AlertCircle className="text-red-500 mb-2" size={32} />
             <p className="text-sm text-slate-300 font-medium mb-3">Koneksi Terputus</p>
             <button
-              onClick={handleRetry}
+              onClick={(e) => { e.stopPropagation(); handleRetry(); }}
               className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded-lg transition-colors"
             >
               <RefreshCw size={12} />

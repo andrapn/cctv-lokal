@@ -67,14 +67,15 @@ const App = () => {
         <h2 className="text-2xl font-semibold text-white mb-1">CCTV Warga Manalagi</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cctvWarga.map((camera) => (
-            <CameraCard key={camera.id} camera={camera} />
+            <CameraCard key={camera.id} camera={camera} autoPlay={true} />
           ))}
         </div>
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-1">CCTV Kota Semarang</h2>
+        <p className="text-slate-400 text-xs mb-4">Klik pada player untuk memulai streaming (menghemat bandwidth).</p> 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cctvKota.map((camera) => (
-            <CameraCard key={camera.id} camera={camera} />
+            <CameraCard key={camera.id} camera={camera} autoPlay={false} />
           ))}
         </div>
       </main>
