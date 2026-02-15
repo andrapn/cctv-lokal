@@ -105,12 +105,21 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
     initPlayer();
   };
 
-  const handleFullScreen = () => {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
+  const handleFullScreen = (e: React.MouseEvent) => {
+      // 2. STOP PROPAGASI: Mencegah klik tembus ke parent (togglePlay)
+      e.stopPropagation(); 
+
+      if (videoRef.current) {
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen();
+        }
+        // Tambahkan support untuk Safari/iPhone jika perlu (webkitRequestFullscreen)
+        // @ts-ignore
+        else if (videoRef.current.webkitRequestFullscreen) {
+          // @ts-ignore
+          videoRef.current.webkitRequestFullscreen();
+        }
       }
-    }
   };
 
   return (
