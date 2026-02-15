@@ -22,7 +22,8 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
   }, []);
 
   const initPlayer = useCallback(() => {
-    if (!isPlaying) return;
+    // FITUR MAINTENANCE: Jangan init player jika sedang maintenance
+    if (!isPlaying || camera.isMaintenance) return;
 
     setStatus(StreamStatus.LOADING);
     const video = videoRef.current;
@@ -79,56 +80,52 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
     } else {
       setStatus(StreamStatus.ERROR);
     }
-  }, [camera.url, camera.label, isPlaying, destroyPlayer]);
+  }, [camera.url, camera.label, camera.isMaintenance, isPlaying, destroyPlayer]);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && !camera.isMaintenance) {
       initPlayer();
     } else {
       destroyPlayer();
       setStatus(StreamStatus.IDLE);
       if (videoRef.current) {
         videoRef.current.pause();
-        videoRef.current.removeAttribute('src'); // Unload video source
+        videoRef.current.removeAttribute('src'); 
         videoRef.current.load();
       }
     }
     return () => destroyPlayer();
-  }, [isPlaying, initPlayer, destroyPlayer]);
+  }, [isPlaying, camera.isMaintenance, initPlayer, destroyPlayer]);
 
   const togglePlay = () => {
+    // FITUR MAINTENANCE: Matikan fungsi klik play jika maintenance
+    if (camera.isMaintenance) return;
     setIsPlaying(!isPlaying);
   };
 
   const handleRetry = () => {
+    if (camera.isMaintenance) return;
     setIsPlaying(true);
     initPlayer();
   };
 
   const handleFullScreen = (e: React.MouseEvent) => {
-      // 2. STOP PROPAGASI: Mencegah klik tembus ke parent (togglePlay)
-      e.stopPropagation(); 
-
-      if (videoRef.current) {
-        if (videoRef.current.requestFullscreen) {
-          videoRef.current.requestFullscreen();
-        }
-        // Tambahkan support untuk Safari/iPhone jika perlu (webkitRequestFullscreen)
-        // @ts-ignore
-        else if (videoRef.current.webkitRequestFullscreen) {
-          // @ts-ignore
-          videoRef.current.webkitRequestFullscreen();
-        }
+    // Tetap menggunakan stopPropagation agar tidak ter-pause
+    e.stopPropagation();
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
       }
+    }
   };
 
   return (
-    <div className="group relative bg-slate-800 rounded-xl overflow-hidden border border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-slate-600">
+    <div className={`group relative bg-slate-800 rounded-xl overflow-hidden border shadow-lg hover:shadow-xl transition-all duration-300 ${camera.isMaintenance ? 'border-yellow-500/50' : 'border-slate-700 hover:border-slate-600'}`}>
       {/* Card Header */}
       <div className="absolute top-0 left-0 right-0 z-10 p-3 bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start pointer-events-none">
         <div>
           <h3 className="text-white font-semibold text-sm flex items-center gap-2 drop-shadow-md">
-            <Video size={14} className="text-emerald-400" />
+            <Video size={14} className={camera.isMaintenance ? "text-yellow-500" : "text-emerald-400"} />
             {camera.label}
           </h3>
           {camera.location && (
@@ -138,7 +135,11 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
         
         {/* Status Badge & Controls */}
         <div className="flex items-center gap-2 pointer-events-auto">
-            {status === StreamStatus.PLAYING ? (
+            {camera.isMaintenance ? (
+                <div className="flex items-center gap-1.5 bg-yellow-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                    MAINTENANCE
+                </div>
+            ) : status === StreamStatus.PLAYING ? (
                 <div className="flex items-center gap-1.5 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse-fast">
                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                     LIVE
@@ -148,28 +149,42 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
                     PAUSED
                 </div>
             )}
-             <button 
-                onClick={handleFullScreen}
-                className="p-1.5 bg-black/40 hover:bg-black/60 text-white rounded-md backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100"
-                title="Fullscreen"
-            >
-                <Maximize2 size={14} />
-            </button>
+            
+            {!camera.isMaintenance && (
+              <button 
+                  onClick={handleFullScreen}
+                  className="p-1.5 bg-black/40 hover:bg-black/60 text-white rounded-md backdrop-blur-md transition-colors opacity-0 group-hover:opacity-100"
+                  title="Fullscreen"
+              >
+                  <Maximize2 size={14} />
+              </button>
+            )}
         </div>
       </div>
 
       {/* Video Container */}
-      <div className="relative aspect-video bg-black flex items-center justify-center group/video cursor-pointer" onClick={togglePlay}>
+      <div className={`relative aspect-video bg-black flex items-center justify-center group/video ${camera.isMaintenance ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={togglePlay}>
         <video
           ref={videoRef}
-          className={`w-full h-full object-fill transition-opacity duration-500 ${status === StreamStatus.PLAYING ? 'opacity-100' : 'opacity-40'}`}
+          className={`w-full h-full object-fill transition-opacity duration-500 ${(status === StreamStatus.PLAYING && !camera.isMaintenance) ? 'opacity-100' : 'opacity-40'}`}
           muted
           playsInline
           controls={false}
         />
 
-        {/* Play Button Overlay (Muncul saat Pause atau Idle) */}
-        {!isPlaying && status !== StreamStatus.ERROR && (
+        {/* Maintenance Overlay */}
+        {camera.isMaintenance && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-sm z-30 p-4 text-center">
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mb-3">
+               <AlertCircle className="text-yellow-500" size={24} />
+            </div>
+            <p className="text-sm text-white font-bold mb-1 uppercase tracking-tight">Sedang Perbaikan</p>
+            <p className="text-[10px] text-slate-400 max-w-[180px]">Koneksi ke unit CCTV ini sedang dalam pemeliharaan rutin.</p>
+          </div>
+        )}
+
+        {/* Play Button Overlay */}
+        {!isPlaying && status !== StreamStatus.ERROR && !camera.isMaintenance && (
           <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/20 group-hover/video:bg-black/10 transition-colors">
             <div className="w-14 h-14 bg-emerald-500/90 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20 hover:scale-110 transition-transform">
               <Play fill="white" className="text-white ml-1" size={28} />
@@ -177,8 +192,8 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
           </div>
         )}
 
-        {/* Pause Overlay (Muncul saat hover video yang sedang main) */}
-        {isPlaying && status === StreamStatus.PLAYING && (
+        {/* Pause Overlay */}
+        {isPlaying && status === StreamStatus.PLAYING && !camera.isMaintenance && (
            <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover/video:opacity-100 transition-opacity bg-black/10">
              <div className="w-12 h-12 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center">
                <Pause fill="white" className="text-white" size={24} />
@@ -187,7 +202,7 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
         )}
 
         {/* Loading Overlay */}
-        {status === StreamStatus.LOADING && (
+        {status === StreamStatus.LOADING && !camera.isMaintenance && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10 pointer-events-none">
             <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-2"></div>
             <span className="text-xs text-slate-400 animate-pulse">Menghubungkan...</span>
@@ -195,7 +210,7 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
         )}
 
         {/* Error Overlay */}
-        {status === StreamStatus.ERROR && (
+        {status === StreamStatus.ERROR && !camera.isMaintenance && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-20 p-4 text-center">
             <AlertCircle className="text-red-500 mb-2" size={32} />
             <p className="text-sm text-slate-300 font-medium mb-3">Koneksi Terputus</p>
@@ -213,13 +228,13 @@ const CameraCard = ({ camera, autoPlay = true }: CameraCardProps) => {
       {/* Footer / Tech Info */}
       <div className="px-3 py-2 bg-slate-800 border-t border-slate-700 flex justify-between items-center">
         <div className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${status === StreamStatus.PLAYING ? 'bg-emerald-500' : 'bg-slate-500'}`}></div>
+            <div className={`w-2 h-2 rounded-full ${camera.isMaintenance ? 'bg-yellow-500' : status === StreamStatus.PLAYING ? 'bg-emerald-500' : 'bg-slate-500'}`}></div>
             <span className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">
-                {status === StreamStatus.PLAYING ? 'Online' : status}
+                {camera.isMaintenance ? 'Maintenance' : status === StreamStatus.PLAYING ? 'Online' : status}
             </span>
         </div>
         <div className="text-[10px] text-slate-500 flex items-center gap-1">
-            <Signal size={10} /> HLS Stream
+            <Signal size={10} /> {camera.isMaintenance ? 'Offline' : 'HLS Stream'}
         </div>
       </div>
     </div>

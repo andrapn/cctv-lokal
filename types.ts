@@ -1,15 +1,17 @@
+// types.ts
+
 export interface CameraConfig {
   id: string;
   label: string;
+  location: string;
   url: string;
-  location?: string;
-  category: 'warga' | 'kota'; 
+  category: 'warga' | 'kota';
+  isMaintenance?: boolean;
 }
 
 export enum StreamStatus {
   IDLE = 'IDLE',
   LOADING = 'LOADING',
   PLAYING = 'PLAYING',
-  ERROR = 'ERROR',
-  OFFLINE = 'OFFLINE'
+  ERROR = 'ERROR'
 }
