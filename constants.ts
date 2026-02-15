@@ -18,81 +18,46 @@ export const CAMERAS: CameraConfig[] = [
     url: 'https://cctv.manalagi.cloud/cam03/index.m3u8',
     category: 'warga'
   },
-  {
+{
     id: 'cam-03',
     label: 'Jalan Jerakah',
-    location: 'Persimpangan',
-    url: 'http://localhost:3001/stream?cat=lalin&name=jrakah',
+    location: 'Lampu Merah',
+    url: 'http://localhost:8888/cctv_jrakah/index.m3u8',
     category: 'kota'
   },
   {
     id: 'cam-04',
     label: 'Jalan Krapyak',
     location: 'Persimpangan',
-    url: 'http://localhost:3001/stream?cat=lalin&name=Counting%20Krapyak',
+    url: 'http://localhost:8888/cctv_krapyak/index.m3u8',
     category: 'kota'
   },
   {
     id: 'cam-05',
     label: 'Jalan Kalibanteng',
     location: 'Columbia Asia',
-    url: 'http://localhost:3001/stream?cat=lalin&name=kalibanteng',
+    url: 'http://localhost:8888/cctv_kalibanteng/index.m3u8',
     category: 'kota'
   },
   {
     id: 'cam-06',
-    label: 'Flyover Kalibanteng',
-    location: 'Flyover',
-    url: 'http://localhost:3001/stream?cat=lalin&name=kalibanteng%202',
+    label: 'Tugu Muda',
+    location: 'Pemuda',
+    url: 'http://localhost:8888/cctv_tugumuda/index.m3u8',
     category: 'kota'
   },
   {
     id: 'cam-07',
-    label: 'Stasiun Pompa Drainase',
-    location: 'Semarang Utara',
-    url: 'http://localhost:3001/stream?cat=pompa&name=ks-kolam',
+    label: 'Simpang Lima',
+    location: 'Jalan Utama Depan Masjid',
+    url: 'http://localhost:8888/cctv_simpanglima/index.m3u8',
     category: 'kota'
   },
   {
     id: 'cam-08',
-    label: 'Balaikota Semarang',
-    location: 'Pemuda',
-    url: 'http://localhost:3001/stream?cat=pemerintah&name=pintu%20keluar%20balaikota%2002',
-    category: 'kota'
-  },
-  {
-    id: 'cam-09',
-    label: 'Tugu Muda',
-    location: 'Pemuda',
-    url: 'http://localhost:3001/stream?cat=lalin&name=tugumuda%203',
-    category: 'kota'
-  },
-  {
-    id: 'cam-10',
-    label: 'Jalan Pandanaran',
-    location: 'Pusat Oleh-oleh',
-    url: 'http://localhost:3001/stream?cat=lalin&name=pusat%20oleh%20oleh',
-    category: 'kota'
-  },
-  {
-    id: 'cam-11',
-    label: 'Simpang Lima',
-    location: 'Jalan Utama Depan Masjid',
-    url: 'http://localhost:3001/stream?cat=lalin&name=simpang%20lima%201%20360',
-    category: 'kota'
-  },
-  {
-    id: 'cam-12',
     label: 'Jalan Pahlawan',
     location: '180 derajat Pahlawan',
-    url: 'http://localhost:3001/stream?cat=lalin&name=pahlawan%20180',
-    category: 'kota'
-  },
-  {
-    id: 'cam-13',
-    label: 'Kota Lama',
-    location: 'Wisata',
-    url: 'http://localhost:3001/stream?cat=wisata&name=sri%20gunting%02',
+    url: 'http://localhost:8888/cctv_pahlawan/index.m3u8',
     category: 'kota'
   }
 ];
