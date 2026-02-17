@@ -18,8 +18,8 @@ export const CAMERAS: CameraConfig[] = [
     label: 'Jalan RT 04',
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cam03/index.m3u8',
-    category: 'warga',
-    isMaintenance: true
+    category: 'warga'
+    // ,isMaintenance: true
   },
   {
     id: 'cam-03',
