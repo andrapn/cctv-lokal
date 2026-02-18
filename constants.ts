@@ -19,7 +19,7 @@ export const CAMERAS: CameraConfig[] = [
     location: 'Persimpangan',
     url: 'https://cctv.manalagi.cloud/cam03/index.m3u8',
     category: 'warga'
-    // ,isMaintenance: true
+    ,isMaintenance: true
   },
   {
     id: 'cam-03',
